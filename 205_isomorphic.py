@@ -1,7 +1,6 @@
 class Solution:
     def isIsomorphic(self, s, t):
 
-
         #######################################################
 
         # this version of the code has a timeout limit, my initial hunch of using a dict to create a map was right
@@ -43,4 +42,4 @@ class Solution:
 
 
 _object = Solution()
-_object.isIsomorphic(s='tada', t='baba')
+_object.isIsomorphic(s="tada", t="baba")

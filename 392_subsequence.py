@@ -5,7 +5,7 @@ class Solution:
 
         if len(s) == len(t):
             return s == t
-        
+
         if len(s) == 0:
             return True
 
@@ -18,5 +18,6 @@ class Solution:
 
         return False
 
+
 _object = Solution()
-_object.isSubsequence(s='ace', t='abcde')
+_object.isSubsequence(s="ace", t="abcde")

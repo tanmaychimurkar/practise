@@ -17,11 +17,11 @@ class Solution:
         rsum = sum(nums)
 
         for index, number in enumerate(nums):
-            if lsum == (rsum - nums[index] -lsum):
+            if lsum == (rsum - nums[index] - lsum):
                 return index
             lsum += nums[index]
         return -1
 
 
 _object = Solution()
-_object.pivotIndex([1,7,3,6,5,6])
+_object.pivotIndex([1, 7, 3, 6, 5, 6])
