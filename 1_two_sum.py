@@ -11,6 +11,7 @@
 #         # nums.remove(current_minimum)
 #         current_minimum = min(nums)
 #         current_minimum_index = nums.index(current_minimum)
+
 #         other_number = target - current_minimum
 #         nums.remove(current_minimum)
 #         j += 1
