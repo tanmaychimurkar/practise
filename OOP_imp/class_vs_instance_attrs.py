@@ -34,7 +34,8 @@ latest changes can be fetched from the class independently via this static metho
 
 ############ Class method ############
 Class methods are bound to a class. The first argument class methods take is a reference to the class. They can be 
-called via the instance or the class name
+called via the instance or the class name. Class methods are often used when one static method has to call other static
+methods
 """
 
 
