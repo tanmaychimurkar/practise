@@ -55,9 +55,9 @@ class MyRobotStatus:
         overall_condition = self.__ro + self.__rh
 
         if overall_condition < 0:
-            return f'I am going to die soon, need oil'
+            return f"I am going to die soon, need oil"
         else:
-            return f'I am alive with pleasure now'
+            return f"I am alive with pleasure now"
 
 
 robot = MyRobotStatus()
@@ -115,10 +115,12 @@ Instead of AttributeError, we can also return a custom exception if an attribute
 done as follows.
 """
 
+
 class CoordinateException(Exception):
     """
     Creating a custom exception
     """
+
     pass
 
 
@@ -133,7 +135,7 @@ class PointException:
 
     @x.setter
     def x(self, value):
-        raise CoordinateException(f'x-coordinate is read-only')
+        raise CoordinateException(f"x-coordinate is read-only")
 
     @property
     def y(self):
@@ -141,9 +143,10 @@ class PointException:
 
     @y.setter
     def y(self, value):
-        raise CoordinateException(f'y-coordinate is read-only')
+        raise CoordinateException(f"y-coordinate is read-only")
 
-point = PointException(12,4)
+
+point = PointException(12, 4)
 # print(point.x)
 # print(point.y)
 
@@ -151,6 +154,7 @@ point = PointException(12,4)
 Property can be used as a common Data validation check whenever we are taking a user input. For the above example, we
 could set data validation checks that verifies if x and y are integers or not. The implementation for that is as follows
 """
+
 
 class PointVerified:
     def __init__(self, x, y):
@@ -167,8 +171,8 @@ class PointVerified:
             self._x = float(value)
 
         except ValueError:
-            raise ValueError(f'x should be an integer or float')
+            raise ValueError(f"x should be an integer or float")
 
 
 p1 = PointVerified(12, 4)
-p2 = PointVerified('a', 5)
+p2 = PointVerified("a", 5)
