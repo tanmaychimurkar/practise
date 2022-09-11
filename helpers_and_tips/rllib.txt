@@ -1,0 +1,156 @@
+Understanding and migrating to RLlib
+
+1) We need a trained object from either Ray as a model (A2Ctrainer), or via Ray tune function
+
+2) RLlib has sample batches for single process or large cluster, so data is always sampled in batches
+
+3) Rollout workers collect samples parallely from the environment(s) clone
+
+4) Algorithm specific configurations are below: 
+
+Trainer object constructs as many rollout-workers (as ray actors) as are mentioned in the configuration file, plus exactly 1 rollout-worker that lives locally inside the trainer object.
+
+Learning updates on the local worker and sampling are performed on the rollout-workers (ray actors)
+
+For controlling resource allocation for the local and the remote workers, we can allocate the following resource inside the configuration file:
+
+
+--- num_gpus = gpus allocation for the one local worker on which the learning will happen
+--- num_gpus_per_worker = gpu allocation for the ray actors that are sampling data in parallel from the environment clones
+
+Inside the configuration file, every per_worker setting only applies to the remote workers, all others apply to the local worker on which the learning updates happen.
+
+Worker failures can be fixed with configuration changes which handle if a worker dies, then his work can be resumed once it is rebooted 
+
+ignore_worker_failures=True or recreate_failed_workers=True:
+
+Scaling guide
+----- https://docs.ray.io/en/latest/rllib/rllib-training.html#scaling-guide
+
+For efficient scaling if using GPU, we can create a small number of GPU workers but change the number of environments per worker to increase efficiency
+
+fragment length defines how much data is each rollout worker getting, aggregation of these is the train batch size. 	
+
+
+-- Evironments configuration inside the common model configuration
+
+Inside ray, we can pass our custome env as a gym.Env object, but we also need to register our environment as simply an <Class Instance> of the custom environment will not be usable by model trainer. So first things first, we need to register our env like a gym-like environment by the following command:
+
+from ray.tune.registry import register_env
+
+def env_creator(env_config=None):
+    return environment
+
+register_env("my_env", env_creator)
+
+
+
+This has to be done via the env_creator or a helper function, as simply passing a environment instance variable don't do shit. This is from the rllib documentation itself, so can't be changed. 
+
+observation_space and action_space can be set to None since they can also be picked from the Environment itself
+
+env_config contains the vars we use for env initialization, but not necessary to pass them sepearately here, since they could also be loaded from the environement variable when it is instantiated
+
+
+normalize_actions = bool, this controls whether action space is normalized, we should set to false since we have a custom scaling function for normalizing actions from the action space
+
+log_dir = directory where the logs can be placed, we have this set to /tmp/something for now which is initialized during MotifManager's initalization
+
+callbacks, this parameter is also used in our logic, but translation has to be looked into to see if it is possible to convert our logic into the callback format that rllib wants
+
+exploration bool, this parameter checks whether to explore areas of the environment that have not been discovered so far, this might not apply for our case, since we are comparing a fixed number of motif trends for our case
+
+replay buffer configurations - nothing needed
+resource settings - nothing needed
+
+
+
+something to look into with Multidiscrete observations
+
+
+sample collection for the rollout worker
+
+
+each rollout worker collects samples from the config dict params, which are
+
+
+batch_mode = either one of below params
+
+        truncated_episodes -> rollouts performed over exactly this number, either env steps or individual agent steps. The rollout_fragment_length setting defines the minimum number of timesteps that will be covered in the rollout
+
+        complete_episodes -> each rollout worker contains full episodes, and can also contain multiple episodes inside it. Note that you have to be careful when choosing complete_episodes as batch_mode: If your environment does not terminate easily, this setting could lead to enormous batch sizes.
+
+
+rollout_fragment_length -> The exact number of environment- or agent steps to be performed per rollout, if the batch_mode setting (see above) is “truncate_episodes”. If batch_mode is “complete_episodes”, rollout_fragment_length is ignored
+
+horizon: max timesteps per episode that an environment can have for the agent. This should be 1 in our case I think, since we are only making a compairsion and then checking the next trend in motif-X
+
+
+
+Trainer API
+
+We select the trainer API for a policy, and initialize it as an object which we later use for the following methods:
+
+train(), save(), restore(), and evaluate()
+
+These are the 4 main functions of any trainer API, and we will also use these 4 functions.
+
+We have a ray.tune.Logger parameter in the config which will create ray's logger, if not passed, then we get the default logger. This might be worth checking out for us if we need verbose logging!
+
+
+
+Rollout Workers
+
+These are the remote actors setup by ray to collect data and return samples from the environment parallely
+
+rollout workers are used for collecting experiences from the environment using the policy instance. Create a new trainer instance for each training session. 
+
+------------------------------------------------------------------
+
+
+-------------------------------------------------------------------------------------------------
+LOGGING
+
+inside the ray api, when we need to log parameters from the custom environment when using multiple workers, we can set the logging level of the main process to either 
+
+`warning` or `critical`. In `info` and `debug`, these logs do not appear to the main worker process, so this is the only way.
+
+Also, the logs returned from the remote workers are not formatted completely as per the basicconfig set by us in the main process logger, so need to check if there is a workaround for that.
+
+
+
+
+
+-------------------------------------------------------------------------------------
+
+Trainer configuration for rllib
+
+
+-- setting `num_workers=0` only creates the local worker, which does the updates and the sample collection. `num_workers = x` sets the local worker alongwith `x` remote workers to collect the samples, so in total `x+1` number of workers are created. Additionally, we can set the number of cpus for each remote worker by the config `num_cpus_per_worker`, so we get extra cpus for each remote worker as well.
+
+-- Point 4 in scaling guide: If the model and environment are compute intesive, set remote workers to sample environemts for faster sampling. This setting is controlled by `remote_worker_envs: True` in the config.
+
+
+
+-- main config dictionary
+
+
+-------------------------------------------------- Rollout worker settings -------------------------------------------------- 
+
+1) `rollout_fragment_length` divides episodes into fragments of this many steps during rollout. Sample sizes of this size are collected from the rollout workers, which are equal to the `trainig_batch_size`. 
+
+Eg: `rollout_fragment_length = 100` and `trainig_batch_size = 1000` implies:
+
+10 fragments of 100 steps each would be collected to create a batch size of 1000 for making one update of SGD
+
+
+2) `batch_mode = truncated` implies each fragment comes only when the episode reaches the `Done` state, or if the hard horizon setting for steps is reached
+
+
+-------------------------------------------------- Environment settings  -------------------------------------------------- 
+
+1) `horizon`: number of steps after which the episode is forced to terminate
+
+2) `remote_worker_envs`: if this is >1, then it creates envs in the remote worker processes. This makes sense if env takes much time for step/reset, otherwise can add large overhead
+
+3) 

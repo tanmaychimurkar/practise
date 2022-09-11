@@ -1,0 +1,146 @@
+Dash
+
+x, y -> always need to be a row vector, i.e., 1D vectors or lists always
+Plots dont work if x,y are not 1D
+
+
+Raw inputs = raw data
+time filtered = raw data between the start and end from dashboard
+
+
+Git
+
+pushing is upstream always, 
+
+---- git push -u origin branch name
+
+
+When branches diverge, use rebase
+
+---- git fetch, git rebase, resolve issues, then git push upstream again
+
+
+
+
+Everything in linux is a file, and has permissions linked to it.
+
+Look at the permissions by:
+
+command: ls -l 
+
+or 
+
+command: ls -al
+
+
+On the left side is the permissions linked with these files, alongwith the directory
+
+The format is as follows:
+
+drwxrwxrwx, rwx is repeated three times, stands for read, write and executable
+
+read --> 4
+write -- > 2
+exec -- > 1
+ total = 7
+
+
+ so chmod 777 implies for each case make the file r, w and x. chmod 757 means give all to 1 and 3, but only r and x for the one in the middle
+
+ What are the three things for which these set of functions are defined?
+
+ The first part refers to the owner's permission, which would be the first column listed inside the output of ls -l
+ The second part refers to the group, in this case the users in the group are sudo, me and docker. Docker itself is a user in the group.
+ The 
+
+
+
+ Dashboard build
+
+ cd /engine/
+ python setup.py install
+
+ Airflow build
+
+ cd /code/
+ python setup.py install
+
+
+---------------- manually populate worknode id into worknode table in caesar
+
+INSERT INTO public.worknodes(
+    enabled, worknode_id, worknode_number, hardware_type)
+    VALUES (false, 'a06ae17da79d0e9ace2976292407b1643ae9238e4634c25945c', 1, 'cpu');
+
+or check the setup_worknode.sh file to see if the worknode that we are using has its CONTAINER_ID shortened or not, if shortened, check if the cgroup for the machine is on or not
+
+
+----------------------- Git stash two before and for a specific file
+
+git stash list
+
+git checkout stash@{stash number} -- filename
+
+
+threads and processes are independent sequences of execution. threads of the same process run in a shared memory space whereas processes run in different memory spaces. Processes are like small different computers themselves, so they don't know about each other in that case. 
+
+
+---------------------------------------------------------------------
+
+git unstage files after they have been added to the commit tree
+
+This unstages all the files from the last commit, where the commit can be looked using 
+
+            git reflog
+
+Once we see which was the commit where we staged all our files, we can see the files that were pushed into that commit with the following command:
+
+            git diff-tree --no-commit-id --name-only -r reflog_hash
+
+or
+
+            git show --pretty="" --name-only bd61ad98
+
+
+Once we are sure we want to unstage all the files pushed into that commit, we can then do the following:
+
+git reset HEAD^
+
+
+All the commited files should now be unstaged, and the color changes showing the diff should now also be visible in PyCharm, so that we have a easy track of what changes we had in the files
+
+---------------------------------------------------------------------
+
+in python, when we use type, the type returned is the name of the mai class of the ocject where it was initialized. 
+
+when we use assert statemenets, we assert whether the type of the object returned is an instance of the class or not, for e.g., 
+
+assert isinstance( np.array([1,2,3,4]), numpy.ndarray ), f'Not of the same instance'
+
+where numpy.ndarray is the class name 
+
+----------------------------------------------------------
+
+
+python convert from scientific notation to decimal notation
+
+("%.17f" % n).rstrip('0').rstrip('.')
+
+----------------------------------------------------------
+
+joining two lists in Python >= 3.5:
+
+joined_list = [*list1, *list2]
+
+same goes for dicts as well, more about this in PEP-448
+
+
+-------------------------------------------------------------
+
+change the yaml file that docker-compose is pointing to by the following command:
+
+docker-compose up -f new_docker_file.yaml --build
+
+------------------------------------------------------------
+
+python 3 has bankers rounding. Rounding .5 numbers always rounds to the nearest even integer. 

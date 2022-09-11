@@ -1,0 +1,157 @@
+docker tips 
+
+# List all the containers that had been running on the machine
+
+	docker ps -a
+
+laptop has certain ports that it can listen to, two dockers can't use same port, so we need port mapping from host to container
+
+	docker run -p6000:6379 redis:4.0
+	docker run -plocalport:containerport
+
+list of images available locally
+
+	docker images
+
+check docker logs
+
+	docker logs containter_id/container_name
+
+stream docker logs inside the terminal
+	
+	docker logs container_id -f
+
+name your container to avoid random naming
+
+	docker run -d -p60001:6379 --name redis-older redis:4.0
+
+run docker in detached mode
+
+	docker run -d redis:4.0
+
+get a terminal into the container
+
+	docker exec -it container_id /bin/bash
+
+dokcer start for container, run to create new container
+
+docker network, connect mongodb container to mongodb express container
+
+docker creates isolated network, containers can talk to each other inside the network
+
+see networks
+	
+	docker network ls
+
+create new network
+
+	docker network create mongo-network
+
+then pass network when running containers
+
+	docker run -d -p 27017:27017 (more parameters) --name momgodb --net mongo-network mongo 
+
+	more parameters can be found for the specific image we are running from the docker hub itself
+
+docker compose
+
+
+version:'3' #version of the docker-compose
+
+services:
+
+	mongodb: # container name
+
+		image:mongo;4.2
+
+		ports:
+		 - 27017:27017
+
+		 environment:
+
+		  -MONGO.._USERNAME=admin
+		  -MONGO.._PASSWORD=password
+
+
+	mongo-express: #contianer name
+
+		image:mongo-express
+
+		ports:
+		- 8080:8080
+
+		more env config same as above
+
+
+
+	# compose creates a network for multiple dependencies
+
+
+docker compose takes file with name as well
+
+	docker-compose -f mongo.taml up
+
+building your own docker image
+
+FROM node
+
+ENV MONGO_USERNAME=ADMIN \
+	MONGO_PASSWORD=PASSWORD
+
+RUN mkdir -p /home/app #run as a linix comand inside the container
+
+COPY . /home/app # copy source target
+
+CMD ["node", "server.js"] # entrypoint for running
+
+differnece between RUN and CMD
+
+CMD is the entrypoint for the container
+
+build iamge from the Dockerfile created
+
+	docker build -t my-app:1.0 .
+
+
+docker volumes for persistent data storage
+
+inside docker run, we can mention where on the host filesystem is the stuff from the docker filesystem
+
+	docker run -v /home/mount/data:/var/lib/mysql/data  (host-docker volume)
+
+
+use named files for production, wherein the volumes can be listed at the end of the docker-compose.yaml
+
+version:'3' #version of the docker-compose
+
+services:
+
+	mongodb: # container name
+
+		iamge:mongo;4.2
+
+		ports:
+		 - 27017:27017
+
+		 environment:
+
+		  -MONGO.._USERNAME=admin
+		  -MONGO.._PASSWORD=password
+
+		volumes:
+		 - db-data:/var/lib/mysql/data
+
+volumes:
+	db-data:
+		driver: local
+
+
+
+where are volumnes on our machioen for named volumes??
+
+linux: /var/lib/docker/volumes
+
+
+
+
+

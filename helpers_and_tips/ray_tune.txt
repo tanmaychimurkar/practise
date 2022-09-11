@@ -1,0 +1,89 @@
+
+Ray Tune
+
+tune.run()  inherently calls ray.init(), so we do not need to initiate a session separately in that case
+
+maybe, ray.shutdown() is also not needed to be called in the beginning of the training loop as ray closes automatically after the script finishes. More trials are needed for making this change in the code of the current implementation.
+
+
+Inside tune, there are the following things:
+
+1) Trialrunner: Main driver process that controls the training loop, and also does the checkpointing if the checkpoint_freq is set as a parameter for this
+
+
+
+checkpointing and resuming tune trials
+
+when we kill the tune.run() process, the execution stops gracefully and the last running checkpoint is saved before exiting the execution. 
+
+
+passing a name to the experiment will help tune find the experiment and then resume training on it. For this purpose, passing name and the resume flag are both required
+
+we can pass a dict to the tune.run() api to make it stop, where the config will need to be passed in the `stop` parameter of the API. We can decide if we need a stopping criteria or not for our case
+
+
+inside tune, we can also set default callbacks that will be run inside the experiment, just like the callback that we have inside our own code
+
+for changing the directory where we store the log files, we can pass `local_dir` argument inside tune.run().
+to store console stdout and stderr to a log file, we can pass the `log_to_file` bool to true, or either pass the filenames for stdout and stderr respectively, relative to trials logdir which we set in the above argument
+
+we can also build custom loggers using ray's LoggerCallback and then pass it along inside the tune.run() call
+
+by default, tune uses all the cpus available on the machine. We can change this behavior using the resources_per_trial dict object, where we can mention the cpu key with the number of processes to run as a value
+
+we can also make use of python `modin` to leverage ray or dask to do dataframe operations on dataframes
+
+there is also distributed training with tune, but that is for the next epic
+
+ray checkpoints during training via either shared filesystem, on cloud buckets, or all local (which is default if the first 2 configs are not passed into the runner)
+
+
+
+many parameters for tune inside the tune.run() function can be also set via Environment variables
+
+-----------------------------------------------------------
+
+tune.run()
+
+needs a metric and a mode (min or max) to be passed into the runner, name, stopping criteria, resources_per_trial, local_dir, 
+
+keep_checkpoints_num - how many checkpoints to keep
+
+checkpoint_score_attr - which attr to rank the checkpoints by, default attr is always increasing
+
+checkpoint_freq - how many training iterations between checkpoints, no effect when using functional training api, but works on trainer objects that I have initialized in the first iteration
+
+checkpoint_at_end - bool, no effect when using functional training api, but works for the trainer object I had initialized before
+
+verbose = 1,2,3
+
+log_to_file - stdout and stderr file names to be provided to get the logs, check if these logs are needed or not
+
+callbacks - check how we can integrate our own callback here
+
+
+we need to take care of setup, save_checkpoint, step and load_checkpoint
+
+subclasses should override _export_model() to actually export model to local directory
+
+subclasses should override load_checkpoint() method to implement restore() model 
+
+subclasses should override log_results() to customize worker logging, driver logging can be disabled by the loggers param in tune.run()
+
+subclasses should override save_checkpoint() method to save model state. There is an example on the following page: https://docs.ray.io/en/latest/tune/api_docs/trainable.html#function-api
+
+ray.tune.Stopper is the base class, we need to implement __call__ and stop_all functions inside to stop the tune.run(). Alternatively, we can also pass a dict as `stop={}` inside ray.tune, and the key-value pairs of this dict can be found in the progress.csv file that we get from running the tune experiment with custom logdir
+
+However, ray.tune.stopper.MaximumIterationStopper(max_iter = int) can be used to stop trials after max_number is achieved
+
+
+tune.run() can be saved into a analysis object, which is of type ExperimentalAnalysis
+
+we get from analysis the following things:
+
+analysis.results_df
+analysis.dataframe
+analysis.trial_dataframe
+trials = analysis.trials
+
+

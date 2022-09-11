@@ -1,0 +1,82 @@
+first thing is give a dialect to the bash script
+
+
+#! /bin/bash
+
+echo Hello World!
+
+# VARIABLE
+# UPPERCASE by convention
+# Letters, numbers, underscores
+
+NAME='Tanmay'
+echo "My name is ${NAME}"
+
+# take user input
+
+read -p "Enter your name: " NAME
+echo "Hello ${NAME}, nice to meet you"
+
+#c confitional
+
+if [ "NAME" == "BRAD"]
+then
+	echo "Your name is BRAD"
+fi
+
+# if-else
+
+if [ "NAME" == "BRAD"]
+then
+	echo "Your name is BRAD"
+else
+	echo "Name not found"
+fi
+
+
+# comparision
+
+-eq, -gt, -ge, -ne ---> use flags instead of <, <=, >, >=
+
+# FiLE conditions
+
+-f, -e
+
+# CASE statements
+
+read -p "Are you over 21 or over? [Y/N] " ANSWER
+case "$ANSWER" in
+	[yY] | [yY][eE][sS])
+		echo "You can have a beer :)"
+		;;
+	[nN] | [nN][oO]
+		echo "SORRy, you canot drink"
+		;;
+	*)
+		echo "Please enter [y/n]"
+esac
+
+
+# function
+
+function sayHello() {
+	echo "HEllo World"
+}
+
+sayHello
+
+# function with params
+
+fucntion greet() {
+	echo "Hello, I am $1 and I am $2"
+}
+
+greet "Tanmay" "27"
+
+# create folder and write to a file
+
+mkdir hello
+touch "hello/world.txt"
+echo "Hello World" >> "hello/world.txt"
+echo "Created hello/world.txt"
+
