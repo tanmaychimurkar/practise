@@ -8,8 +8,8 @@ class ListNode:
 class Solution:
     def reverseList(self, head):
 
-        if head.next is None:
-            return []
+        if head is None:
+            return None
 
         # tmp = head
         ahead = head.next
