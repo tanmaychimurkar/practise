@@ -1,0 +1,202 @@
+Commit and branching is pretty basic.
+
+
+---------------------------------------- Working on local branches -------------------------------------------
+###### Combining two branches
+
+
+1) `git merge`: merging in git creates a special commit with two parents, that says include all the work from these
+two parents, and the set of all their parents.
+
+works by: git merge (branch we want to merge into our current branch)
+
+2) `git rebase`: rebase takes a set of commits, copies them and plops them somewhere. This creates a linear log of
+commits, and makes a nice history for the repository.
+
+works by: git rebase (branch we want to rebase with from our current branch) {notice the difference with git merge}
+
+rebase creates a new commit ahead of the `master` branch when we go `git rebase my_branch`. This looks like the feature
+that was built in my_branch was built sequentially alongside the `master`, while in reality it was built in parallel.
+This is the nice linear log of commits that we get from using git rebase. Once we start a rebase however, our changes
+are now in a commit ahead of the `master`, and the master now need to be in sync with the latest commit from my_branch.
+
+To move the `master` to the latest commit created by our branch my_branch, we need to checkout to `master` and do a
+rebase with my_branch to bring main in sync with my_branch
+
+####### Moving through commits
+
+HEAD: always points to the latest commit on which we are working. It points, by default, to the most latest commit on
+which we are (this can be changed, however). When we commit from a branch we are working on, the HEAD is moved from
+the branch to the latest commit which we just made.
+
+Detaching HEAD: detaching a HEAD means simply changing the HEAD from the latest commit to a previous commit. This could
+also mean changing the HEAD from a branch to a commit (i.e, checking out to a commit instead of a branch).
+
+Relative Refs(^): We can reference which hashes we want to check out to from `git log` by only mentioning the first 4
+letter of a hash.
+
+There are two types of relative refs to move up the commit tree:
+
+1) ^ : this moves the HEAD up the commit log by 1 level
+
+2) ~<num>: this moves the HEAD upwards by <num> of commits
+
+works by: 1) git checkout my_branch^ 2) git checkout my_branch~4
+
+We can use branch forcing to check out the branch directly using the ~ relative ref.
+works by: git branch -f my_branch HEAD~3
+
+######### Reversing changes in Git
+
+we can reverse changes in git by either `git reset` or `git revert`
+
+1) git reset: this moves the branch backwards as if the commit never happened. This works well for branches on our
+local machine
+
+works by: git reset HEAD^1
+
+2) git revert: reverts the changes that are on the remote branch so that they can be shared with others as well. git
+revert creates a new plop commit, that contains the changes that we want to revert.
+
+######## Moving commits around
+
+1) cherry-pick: This is a way for developers to say that I want this work here and that work there. The cherry-pick
+command copies the selected set of commits and pastes them under the current location (HEAD).
+
+Works by: git cherry-pick <commit1> <commit2>..
+
+
+2) interactive rebase: cherry-pick works when we know which specific commit hashes we want to include after our current
+HEAD. When we do not know which commits we want to include after our HEAD, we use the interactive rebase.
+
+works by: git rebase -i (branch we want to rebase with from our current branch) {notice the difference with git merge}
+
+########## Move a branch to a commit
+
+To move a branch to a commit ahead in the history, we can use branch forwarding.
+
+works by: git branch -f my_branch commit_hash
+
+######## git commit amend
+
+We can rewrite history of a commit with `git commit --amend`. We can do this even on commits we made on a current
+branch, but forgot to stage some files (staging is adding files via `git add`). In case we missed some files to add to
+the current commit, we can use `git commit --amend` and then it will let us rewrite the history of the commit. However,
+this creates a new commit altogether.
+
+However, amended commits are new commits altogether and they replace the old commit, i.e., the old commit will not be
+on our branch at all.
+
+####### git tags
+
+We can mark specific points in our history, like major releases or big merge requests, by tags.
+
+works by: `git tag tag_name commit_name/branch_name`
+
+---------------------------------------- Working on remote branches -------------------------------------------
+
+Remote repositories are the same as the local repositories, just that the code is stored on a different computer.
+
+Remote branches are called either `remote` or `origin`. Checking out to a remote branch automatically sets us in
+detached HEAD mode, since it is not possible to work directly on remote branches. What we check out to the `main` or
+`master` on our machine, it is still a the remote branch.
+
+remote branches have a required naming convention, in that they are named as `remote_name/branch_name`
+
+###### fetching work from remote repository into our local machine
+
+1) git fetch: When we do `git fetch`, all the commits from the remote repository are fetched into our origin branch.
+For example, if the name of our master branch is `origin/main`, doing `git fetch` will take `origin/main` to the latest
+commit that was fetched from the remote repository.
+
+`git fetch` performs two main steps:
+    1) Downloads commits from the remote repository that are missing from our local repository
+    2) Updates where our remote branch points to
+    These two steps, performed internally by `git fetch`, synchronizes our local representation of the remote repository
+    with the remote representation of the remote repository.
+
+However, git fetch does not update our local state. It only fetches all the commits from the remote repository into
+our local machine.
+
+2) git pull: As we saw in `git fetch`, once we have fetched all the commit available on the remote repository but not on
+the local copy, we still need to merge those changes into our local `master` branch. This can be done in many ways:
+
+    - git rebase origin/master
+    - git merge origin/master
+    - git cherry-pick origin/master
+
+However, `git pull` does this for us in one step. It first fetches all the commits that are missing from our local
+repository, and then merges them so that our local repository has the same state as that of the remote repository.
+
+
+####### pushing changes
+
+`git push`: git push changes the local `master` branch to the remote repository, and brings the local `origin/master`
+branch upto date with the latest changes from the `master` branch.
+
+What is upstream when pushing?
+Upstream and downstream refer to where you cloned from and downstream is any project that integrates your work with
+other works. We can check which remotes are set for our project by using `git remote -v`.
+
+###### diverged history
+
+History diverges when you have been working on a feature branch for sometime and there have already been some changes
+on the `master` branch. If it takes you 5 days to create your feature branch and others have already merged their work
+in the `master` branch, then when you push on the 5th day, you will have a diverged history. In this case, you would
+have to incorporate the changes that the remote repository has into your feature branch.
+
+The most straightforward way of synchronizing your local branch with the remote branch is to use rebasing. The way we
+do this is as follows:
+
+    - 1) fetch latest changes from the remote repository into your local copy
+    - 2) do rebase with the remote branch of the feature name with your local feature branch. This will give you a new
+    linear commit ahead of the latest changes that were fetched from the remote branch
+    Now you have synchronized your local feature branch with the remote feature branch. This doesn't necessarily need to
+    be for feature branches and can translate to `master` branches as well. 
+
+Once you are in diverged history mode, we need to do `git fetch`, `git rebase`, and then `git push`. Doing this makes
+sure that all our work is added linearly as a new commit in the commit history.
+
+
+###### set remote tracking
+
+We can which remote branch our local branch will track. We can set this option by the setting a remote branch ref to
+our local branch.
+
+Works by: git branch -u origin/master my_branch
+
+The above command will set my_branch to track origin/main. However, in most cases, when we create a branch from the
+master branch in github, our remote tracking for the feature_branch is set to the origin/feature_branch, i.e.,
+our feature_branch is tracking the remote feature_branch. This is why to push your work and to create a merge request,
+we can just do the default `git push`
+
+###### git push with remote details
+
+The above command will set my_branch to track origin/main. However, in most cases, when we create a branch from the
+master branch in github, our remote tracking for the feature_branch is set to the origin/feature_branch, i.e.,
+our feature_branch is tracking the remote feature_branch. This is why to push your work and to create a merge request,
+we can just do the default `git push`
+
+To always put a remote while pushing to make sure your changes go into the right remote feature_branch, you can pass the
+remote branch as an optional argument in the git push command.
+
+Works by: git push <remote> <place>
+
+The place argument is giving git the name of the local branch that has to push changes to the remote branch. The branch
+specified in the <place> argument determines where the commits will be fetched from and where the pushed commits will go
+
+So, writing `git push origin main` will do the following: Take all the commits from the branch `main` on my local
+machine, and push those commits to the `main` branch on the remote, and the name of the remote is `origin`.
+
+###### pushing changes from one branch to another branch in remote
+
+If we want to push our changes from `branch_1` to a branch `branch_2` on remote, we can do so by the following command.
+
+Works by: git push origin source:destination
+
+Source and destination are the names of the branches that fit the context of `branch_1` and `branch_2`.
+
+
+
+
+
