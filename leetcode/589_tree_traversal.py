@@ -21,8 +21,8 @@ class Solution:
                 if child is not None:
                     get_children(child)
 
-        if root.val is None:
-            return []
+        if root is None:
+            return None
 
         get_children(root)
         return tree_nodes
