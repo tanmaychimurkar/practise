@@ -1,0 +1,11 @@
+In a binary tree, each node can have at most two children.
+
+There are different traversal methods for traversing a binary tree. They are:
+
+1) Pre-order traversal: We start from the root, and travel the left subtree first, then the right subtree.
+
+2) In-order traversal: Travel the left subtree first, then root, then right subtree
+
+3) Post order traversal: We travel the left subtree first, then the right subtree, then the root node at the end
+
+4)
