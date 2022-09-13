@@ -24,7 +24,6 @@ class Solution:
             for _ in range(len(queue)):
                 node = queue.pop(0)
                 next_values.append(node.val)
-                # queue.pop(0)
                 if node.left:
                     queue.append(node.left)
 
