@@ -12,20 +12,34 @@ class TreeNode:
 class Solution:
     order = []
 
+    # def preorderTraversal(self, root):
+    #
+    #     def traversal(node):
+    #         if not node:
+    #             return
+    #
+    #         self.order.append(node.val)
+    #         traversal(node.left)
+    #         traversal(node.right)
+    #
+    #     traversal(root)
+    #
+    #     return self.order
+
+    # iterative solution for pre-order traversal
     def preorderTraversal(self, root):
+        stack = [root]
+        result = []
 
-        def traversal(node):
-            if not node:
-                return
+        while stack:
+            root = stack.pop()
+            result.append(root.val)
+            if root.right:
+                stack.append(root.right)
+            if root.left:
+                stack.append(root.left)
 
-            self.order.append(node.val)
-            traversal(node.left)
-            traversal(node.right)
-
-        traversal(root)
-
-        return self.order
-
+        return result
 
 
 _obj = Solution()

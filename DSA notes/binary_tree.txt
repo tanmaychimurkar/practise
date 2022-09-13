@@ -2,7 +2,9 @@ In a binary tree, each node can have at most two children.
 
 There are different traversal methods for traversing a binary tree. They are:
 
-1) Pre-order traversal: We start from the root, and travel the left subtree first, then the right subtree.
+1) Pre-order traversal: We start from the root, and travel the left subtree first, then the right subtree. Can be
+solved either recursively or using stack for iterative solution. Recursive solution is DFS, as we traverse the tree
+by the depth first to left and then by depth to the right.
 
 2) In-order traversal: Travel the left subtree first, then root, then right subtree
 
