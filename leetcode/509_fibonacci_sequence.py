@@ -1,4 +1,9 @@
+import functools
+
+
 class Solution:
+
+    @functools.cache
     def fib(self, n):
 
         mem = {}
