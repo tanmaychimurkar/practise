@@ -9,35 +9,39 @@ class TreeNode:
 
 class Solution:
 
-    # def preorderTraversal(self, root):
+    # # recursive solution
+    # def inorderTraversal(self, root):
     #
     #     def traversal(node):
     #         if not node:
     #             return
     #
-    #         order_list.append(node.val)
     #         traversal(node.left)
+    #         order_list.append(node.val)
     #         traversal(node.right)
     #
-    #     order_list = [root]
+    #     order_list = []
     #     traversal(root)
     #
-    #     return ordered_list
+    #     return order_list
 
     # iterative solution for pre-order traversal
-    def preorderTraversal(self, root):
-        stack = [root]
+    def inorderTraversal(self, root):
+        stack = []
         result = []
 
-        while stack:
+        while root is not None or stack:
+
+            while root is not None:
+                stack.append(root)
+                root = root.left
             root = stack.pop()
             result.append(root.val)
-            if root.right:
-                stack.append(root.right)
-            if root.left:
-                stack.append(root.left)
+            root = root.right
 
         return result
+
+
 
 
 _obj = Solution()
@@ -48,7 +52,7 @@ root.right = TreeNode(3)
 root.left.left = TreeNode(4)
 root.right.left = TreeNode(5)
 root.right.right = TreeNode(6)
-root.right.left.left = TreeNode(7)
-root.right.left.right = TreeNode(8)
+# root.right.left.left = TreeNode(7)
+# root.right.left.right = TreeNode(8)
 
-_obj.preorderTraversal(root)
+_obj.inorderTraversal(root)
