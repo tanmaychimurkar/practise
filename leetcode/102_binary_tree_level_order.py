@@ -1,4 +1,7 @@
 # Definition for a binary tree node.
+import collections
+
+
 class TreeNode:
     def __init__(self, val=0, left=None, right=None):
         self.val = val
@@ -10,27 +13,39 @@ class TreeNode:
 class Solution:
     def levelOrder(self, root):
 
-        level_order = [[root.val]]
+        if root is None:
+            return
 
-        # def get_children(node):
-        children = []
-        child_root = []
+        queue = [root]
+        main_result = []
 
-        if root.left is not None:
-            child_root.extend([root.left.val])
-            # return
-        if root.right is not None:
-            child_root.extend([root.right.val])
+        while queue:
+            next_values = []
+            for _ in range(len(queue)):
+                node = queue.pop(0)
+                next_values.append(node.val)
+                # queue.pop(0)
+                if node.left:
+                    queue.append(node.left)
 
-        level_order.append([root.val])
-        level_order.append(child_root)
-        # child_node.append([child_node])
+                if node.right:
+                    queue.append(node.right)
 
+            main_result.append(next_values)
 
-tree = TreeNode(1, 3, 5)
-tree.left = TreeNode(3, 6, 7)
-tree.right = TreeNode(5, 9, 10)
-tree
+        return main_result
+
 
 _obj = Solution()
--_obj.levelOrder(tree)
+
+root = TreeNode(1)
+root.left = TreeNode(2)
+root.right = TreeNode(3)
+# root.left.left = TreeNode(4)
+# root.right.left = TreeNode(5)
+# root.right.right = TreeNode(6)
+# root.right.left.left = TreeNode(7)
+# root.right.left.right = TreeNode(8)
+
+
+_obj.levelOrder(root)

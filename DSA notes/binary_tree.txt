@@ -10,4 +10,4 @@ by the depth first to left and then by depth to the right.
 
 3) Post order traversal: We travel the left subtree first, then the right subtree, then the root node at the end
 
-4)
+4) level order traversal: This is the implementation of BFS for getting the node output by each level of the tree
