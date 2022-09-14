@@ -26,7 +26,7 @@ class Solution:
     #     return False
 
     # todo: the same could be done using a set as a hashmap instead of a dictionary
-    def containsDuplicate(self,nums):
+    def containsDuplicate(self, nums):
         count_list = set()
         for number in nums:
             if number in count_list:
