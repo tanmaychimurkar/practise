@@ -1,0 +1,12 @@
+If we want to create a dictionary while looping over an array but do not have the keys for all the possible elements,
+we can use the following instantiation method to create such a dictionary:
+
+    new_dictionary = collections.defaultdict(list/int)
+
+If we pass a list or int to the deafultdict function, then the new dictionary will have the default values as an
+empty list/ can only take integers. This is useful to avoid KeyErrors when accessing the dictionary to insert a desired
+datatype for the first time
+
+---------------------------------------------------------------------------------------------------
+
+
