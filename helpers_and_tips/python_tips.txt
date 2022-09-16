@@ -7,6 +7,8 @@ If we pass a list or int to the deafultdict function, then the new dictionary wi
 empty list/ can only take integers. This is useful to avoid KeyErrors when accessing the dictionary to insert a desired
 datatype for the first time
 
+More about this can be read at: https://docs.python.org/3/library/collections.html#collections.defaultdict
+
 ---------------------------------------------------------------------------------------------------
 
 
