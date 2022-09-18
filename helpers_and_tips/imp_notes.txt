@@ -143,4 +143,14 @@ docker-compose up -f new_docker_file.yaml --build
 
 ------------------------------------------------------------
 
-python 3 has bankers rounding. Rounding .5 numbers always rounds to the nearest even integer. 
+python 3 has bankers rounding. Rounding .5 numbers always rounds to the nearest even integer.
+
+-------------------------------------------------------------
+
+see size of the folder from cli using
+
+du -sh *
+
+see the size of the whole directory using
+
+du-sh .
