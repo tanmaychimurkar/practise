@@ -112,4 +112,11 @@ for word in ["dog", "cat"]:
 """
 In a simple description, we define the creation of the objects in a different function, rather than in the main class
 or during execution directly. This helps avoid using `if-else` statements.
+
+We can use this approach when we do not now beforehand what type of object categories our code would be working with. 
+As we create a factory for creating the type of objects, we can add new object types easily by overriding the default
+implementations of the base class we are inheriting from. 
+
+Again, this is best used when we do not want many if else switch cases in part of the code where object creation takes
+place.  
 """

@@ -81,4 +81,8 @@ dog_shop = PetShop(Dog)
 mycat1 = cat_shop.buy_pet('Tom')
 mydog1 = dog_shop.buy_pet('Spike')
 
-Ellipsis
+"""
+In short, abstract factory methods can be used when we need to recreate many instances of the same object for our 
+use cae. We use this design pattern when our code needs to create multiple instances of the same class, but we do not
+want our object creation to depend on the main class itself. 
+"""
