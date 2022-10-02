@@ -1,0 +1,65 @@
+n python, a module defined inside a project can only be accessed if the directory of the module is added to the PYTHONPATH. This can also be done at runtime via the `sys` module as follows:
+
+	import sys
+	sys.append('project_root_dir_containing_module')
+
+------------------------------------------------------------
+
+
+We can check where a module is being loaded from as follows:
+
+	import module
+	module.__file__
+
+This will show the location from where the module is being loaded. 
+
+------------------------------------------------------------
+
+The `dir()` function returns a list of defined names in the namespace. This includes names of the variables in the current scope and all the derived variables.
+
+------------------------------------------------------------
+
+The (__name__ == __main__) condition is only invoked whenever a module is run from the terminal. If we have variables and functions above this condition, they will not be run when the module is imported.
+
+So we can call functions defined in the module and print statements inside the __main__ function and they will be printed once the module is called by the python terminal
+
+------------------------------------------------------------
+
+The role of the `__init__.py` file is to invoke a directory as a python package. It is not necessary to keep the `__init.py` file present in a directory to make it a package and to be able to use imports from that package. The importing can now be done without having to keep the __init__ file inside a directory. 
+
+
+------------------------------------------------------------
+
+VVVV IMP: the root of the project that is opened in PyCharm or any editor matters very much be to able to use imports from one directory into another. If ever stuck with this, look into `absolute imports` from python to get clarity.
+
+------------------------------------------------------------
+
+Only files that are in the `sys.path` variable can be imported from the current working directory. This does not seem to be a scrict condition, as if we are in the current working directory where the packages are, we can still import them from the console.
+
+The modules inside a package are only imported by the `*` method only if the `__init__.py` file of the package contains a `__all__` variable listing all the names of the modules to import. 
+
+------------------------------------------------------------
+
+gitignore.io is used to create gitignore files for a language instantly
+readme.so is used to create good readme files for projects
+
+
+------------------------------------------------------------
+
+Each python project that we want to ship to pip should have a `pyproject.toml` configuration file. 
+
+The configuration in the toml file is as follows:
+	1) The `name` configuration is the name of the package as it will appear on PIP. 
+	2) The `classifiers` variable mentions the list of the compatibilities of the package on PyPI page
+
+Packages should always be tested locally first, and for this, we have editable installs. 
+
+Editable installs are good in the sense that they do not install the package into the `site-packages` directory, but instead install them locally. 
+
+To install a local package across `site-packages`, we can run `python -m pip install -e .` from the directory where the `pyproject.toml` file exists
+
+
+
+
+
+
