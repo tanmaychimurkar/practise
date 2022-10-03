@@ -29,3 +29,111 @@ When we develop the server and the client applications, we need an application p
 
 At the core of every communication that we make via the internet today are these 4 layers that govern how the data will be exchanged via the internet. We now take a look at each of the individual layers from the above 4 layered stack of transferring data.
 
+
+1) The Link layer:
+
+This is the lowest layer of the TCP/IP model since this is the layer that is the most connected to the hardware of the comptuer. Examples of link layers are wifi, fiber optics, satellite links, etc. When we send a packet to a link, the link transfers or hops the packet over multiple routers to the internet. The first router that handles collection of the packets is called the `gateway` or the `base station`. When computers are in the range of the router, all of the computers receive all the data that the router transmits, regardless of whether the packet belogns to the computer or not. For this reason, the computer needs a mechanism to identify whether or not a packet is its responsibility or not. And since all the computers within the range of the router can listen to all the data that the router is transmitting, other rogue computers that are connected to the router may be able to see sensitive data like passwords and bank details. Every wifi radio in every device is given a unique serial number, and this number is called the `Media Access Control` or the MAC. It is a 48-bit serial number for your wifi radio. 
+
+Mac address is like `from` or `to` addresses like on postcards. When our computer connects to a new network, it has to look into which MAC address it can take and send its packets thereafter. When we first connect to a WIFI network, the computer has to discover which MAC address it should take from the router. To determine the MAC address, the computer first sends a message like `Who is in charge of this WIFI?` For this message, the computer sends it's MAC address as the `from` and the broadcase address as the `to`. If there is a gateway present on the to address, the computer receives a response back with its serial number back to the computer. If there is no gateway present, the computer might show a wifi icon with the `!` key, stating that the gateway did not respond from the router. Once we have the MAC address of the broadcaster router, we can start sending our packets with the address of the destination router, and we use the address of the broadcaster as little as possible. 
+
+For collisions that might occur when trasmitting data, the source link adapts a `wait and retry` strategy, where the wait time for each source connected to the link is randomly assigned. This helps avoid collisions in the packet data that is sent to make sure no corruption happens to the packets. 
+
+There is also a system of token allocation to the packets so that they are able to send the packet data only once they have the token with them. This can sometimes cause long waiting times, and is only efficient to be implemented in cases like satellite links where collisions are far too expensive. 
+
+
+2) The internetwork layer: 
+
+Every packet that has to pass through a router has to be routed correctly to reach the destination as fast as possible. For a router to be able to quickly determine where it has to send the packet, it has an assigned address, which is called the IP address of the router. The link layer address is assigned when the link is embedded in the hardware of the machine. For this purpose, each device that is connected to the link via the internet is given a special address (different than the link address), which is the IP address of the network it is connected to. This IP address could either be IPv4 (4 numbers separated by dots, ranging from 0 to 255), or IPv6 (consisting of 8 numbers). 
+
+Every IP address can be broken into two parts: The first part (consisting of two dots) is the Network Number and the second part is the Host Identifier. We can split the IP address across multiple dots, but if for example, we choose the split the IP address 212.78.1.25 in half, we can get a total of `212*78` computers being attached to the same Network Number. By this approach, the router does not have to keep track of all the billions of computers, but instead it has to keep track of the computers that are connected to the Network Number. Thus, when the router receives a packet, it does not have to look at the full IP address of the machine sending it, but rather only the first half that is assigned to the Network Number to determine the next outbound link. 
+
+To be able to send a packet across the outbound link, the router has to know the route it has to follow, and if it does not know the route, it asks the neighbouring routers for to check if they know the path for packet coming from that Network Number. The router continuously builds a routing map from the initial packet that is supposed to reach a destination, and the next time a packet comes that has to reach the same destination, the router does not have to recalcaulate the path it has to take to forward the packet to the next outbound router. These maps that a router builds is called the `routing table`. 
+
+When a router enconters a failure in the outbound link, the recovery process discards all entries from the routing table where there is a broken link, and starts the process of building the routing table once more. Thus, initially the packet transfer speed will be slow, but overtime things will get jolly good again. 
+
+The router is always looking for ways to improve its routing table, and whenever the traffic of packets sent on the router is low, it asks all the neighbour routers if they have better or faster routing tables, and if they do, the router adapts its current routing table to reflect the best changes that it could find. This is called dynamic routing. 
+
+No router knows beforehand the full route a particular packet will take when it comes to a router, but only the immediate link it has to transfer the packet to. But most computers have a network diagonistic tool called `traceroute` that allows tracking the route from the source computer to the destination computer. But since the router only knows the next outbound link it is supposed to transfer the packet to, there is a possibility that the packet is stuck between a set of routers and thus can never escape. To solve this, every packet is given a time to live (TTL), which usually starts around 30 and is decremeneted by 1 everytime a packet runs through a hop. If a packet gets stuck in a loop vortex of routers, eventually its TTL would become 0 and the packet would be thrown away. And since the packet is only removed from the source computer once it receives a confirmation from the destination computer, the data that the packet was carrying is not lost once it is thrown away. The TTL mechanism is good to avoid bringing all the routers in a particular route to crash down. 
+
+The link address of a computer is embedded in the hardware of the computer when it is manufactured, and remains unchanged. However, when the network that a computer is connected to changes, the computer will need a new IP address. This assignment of the IP address is done via the `Dynamic Host Configuration Protocol` or DHCP. DHCP works as follows: at the link layer, the computer checks if there is a base station to which it can connect, and sends a message to the base layer to check if it is connected to the internet via a gateway. If it is connected, then it again asks the IP address of the network and asks the network which IP address it itself can connect to. The network router then loans an IP address to our machine, and if we are gone, the IP address is then assigned to a different machine that comes after us. 
+
+If DHCP is unable to assign an IP address, the source computer would then assign itself an IP address anyway, and these IP addresses start with `169.`. When this is the case, the computer thinks it is connected to a network, but without a gateway, and is thus unable to transfer packets from the the local network across the internet. But if many such computers are connected to the same local network that rejected the IP address assignment, and they can communicate between each other. 
+
+If we track the IP addresses that different network gives us when we change from places to places, we could see that many of them start with `192.168` (addresses starting with 10. are special) These addresses are non-routable, meaning that they cannot route data from the local network to the internet, but can only be used within a single local network. But devices having this IP address still work fine, since they use `Network Address Transition` or NAT. The gateway has a single IP address which is routable, and whenever the local router sends its packets to the gateway, the gateway assigns the IP address which is routable, and thus we are able to use internet even with an local IP address starting with `192.168.`. This allows us to conserve the real routable address, and reuse the local addresses again and again to communicate with the gateway. 
+
+For our local home connections, we take the internet from our local ISP provider, who gives us a range of IP addresses from a higher authority. At the top of IP address allocations are five Regional Internet Registeries, who can assign IP based on the geographic region. 
+
+3) The domain name system: This system allows us to access webistes by their names instead of their IP address. This makes it easier to reference and reach websites. The DNS manages the IP addresses as a phonebook so that the server can be safely moved from one location to another. 
+
+The assignment of domain names is handeled by the International Corporation for Assigned Network Names and Numbers, which chooses top level domains (TLDs) like .com, .org and assigns them to the respective organization. 
+
+4) The Transport layer:
+
+The internetwork layer is only responsible for sending the packets forward. It has no responsibility of keeping the order of the packets correct, and thus it is very likely that the order in which the packets are received are not entirely in order. The assembly of the packets to the correct order is job of the transport layer. 
+
+Every packet is given the link header as it is passing through different link layers. The TCP and IP headers stay with the packet as it is going through multiple links before being transferred to the destination link. The TCP header contains the offset for the packet that is being sent which contains the information relative to the order in which the packet would need to be assembled. 
+
+The transport layer looks at the incoming packets and their offsets and decides where in the order should the packet be placed so that the full message is fully reconstructed. To avoid overloading the transport layer, a `window size` is defined on it, which determines the amount of data that is sent and the source computer receives an acknowledgement that the packet has been successfully received. 
+
+When a packet is lost or corrupt, the receiving computer does not send the confirmation of receiving the packet, and thus the source computer is waiting. Alongside, the receiving computer is waiting to receive the correct packet from the source computer, and in this scenario, both the computers are waiting on each other. To avoid waiting for a long time, the receiving computer has a time limit from the time it received the last packet, and once this threshold is passed, the source computer starts sending the data again from following the packet that the receiving computer last successfully received. 
+
+The sending computer must hold on to all the packet that is being sent to the transport layer until it receives a confirmation that the packet has been successfully received. 
+
+the client and the server work hand in hand for communication to happen successfully. For the client, like the web broswer, it is important to know not only the address of the server, but also which running application it should connect to. We use ports which allows a client application to choose the server application with which it has to connect. Thus, whenever a server boots up, it starts listening to the open application ports it has, and then accepts incoming client requests for the specific port number. Common ports are as follows:
+
+	telnet (23): login
+	ssh (22): secure login
+	HTTP (80): World wide web
+	HTTPS (443): Secure WWW
+	SMTP (25): Incoming mail
+	IMAP(143/220/993): Mail retrieval
+	POP (109/110): Mail retrieval
+	DNS  (53): Domain name resolution
+	FPT (21): File transfer
+
+When we use the port 8080 to run a local web application, the browser uses the web protocol to connect to the application, but instead of connecting to 80, it connects to 8080. 
+
+
+5) The application layer: 
+
+In our client and server architecture, the client needs to know which application on the server the client needs to connect to. Moreover, the client should also follow a set of protocols that determine how the communcation with the application server should happen in a sophisticated way. The set of protocols that are commonly used are defined in the HTTP protocol list. This is the most simplest and the most successuful protocol to communicate with web servers. 
+
+In HTTP protocol, every query we make has a status code. The status codes in the range 2xx are for success, 3xx indicate the redirecting, and 4xx indicate an error on client side, and 5xx indiciate an error on the server side. 
+
+For the case of client and server applications, we could take the scenario where the client is trying to access an image on the web server. The web server returns packets of data to the transport layer, which takes it back to the client. If the window size is too small of if the transport layer needs time to receive the acknowledgement from the source that it has received the data, we could see that the image is painted on the client browser when it is received. 
+
+The transport layer moderates how much data is allowed from the server to the client, and can keep fluctuating between pause and resume. This methodology of stopping and resuming is called the flow control. The flow control is governed by the transport layers and not the application layer. 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
