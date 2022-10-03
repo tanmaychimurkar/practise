@@ -1,0 +1,31 @@
+In network terminology, every message that has to be transferred from one computer to another is broken down into packets. Each packet is therefore a small fragment of the complete message, and thus it is easier to trasfer a small packet instead of a full message at a time via multiple linked computers or `hop`.
+
+Breaking a large message into small packets allow the intermediate computers to store only a small amount of information, and thus this is beneficial for transferring a large message via multiple computers. 
+
+As the messages started being broken into smaller packets, there were specialized computers whose job was to only take and forward a packet to the responsible computer in the next sequence, and these computers were called `routers`. 
+
+Along with every packet that was transferred, the source, destination and the order in which the packet has to be assembled was also transferred. The typical packet size is between 1000 and 3000 characters. 
+
+The larger architecture of internet is broken into 4 smaller architectures: 1) Link layer, 2) Internetwork, 3) Transport and 4) Application. This 4 layered architecutre is called the `TCP/IP` model, in regards to the transport layer and the internetwork layer. 
+
+1) Link layer: This layer is responsible for connecting your local device to a local network and moving the data across a single hop. The most common example of this is the wireless connection we connect to today. Since many computers or devices are connected to a single
+link, there is always a chance of collisions between the packets of multiple computers. This collision could be avoided by using packets instead of sending a full message everytime. 
+
+But for multiple computers to send data at the same time, the `Carrier Sense Multiple Access with Collision Detection` or CSMA/CD method was engineered. This method continuously checks if the computer on which we are trying to send the data is currently not receiving any
+data, and if it is not receiving any data, the current computer starts transmitting the data. The computer also checks if it can receive its data, and if it can then it knows that the other computer is open to take connections. In case of a collision, the current computer does not receive its own data, both the computers stop and try after a bit. Thus CSMA/CD ensures that every computer gets a fair share while transmitting packets of data to the link. 
+
+2) Internetwork layer: Once the packet has passed from one link to another, this is called a hop. Once it has passed from the initial hop, it has the source and the destination of where the packet has to reach. The router then takes its best guess for the packet to be able to reach its final destination, and transmits the packet to the next nearest link. This is similar to travelling from one country to another to a hotel, as at all times in the intermediate means of transport, we do not know the exact location of the hotel but only the next nearest destination that will help us reach the destination. The logic behind transmitting packets is the same, the further we are from the destination, the less we need to know about the exact position we want to reach. The router is also responsible to keep track of delays or outages in the route that it chooses to transmit the data and should switch to a different working route as soon as it detects a delay. 
+
+Thus the job of the internetwork layer is to figure out the best possible route for the packets being transferred, and to also check for delays in the route. 
+
+3) The transport layer: If the packets get lost while being transmitted or while in hop, they need to be recovered and sent to the correct destination. As the packets are received at the last link, the last link keeps sending messages to the source computer to let it know what parts of the data it has received so far. Incase the destination link detects that some of the packets are missing, it asks the source computer to resend the respective packet to the destination. 
+
+Back at the source computer, it always keeps listening from the destination computer to check how much data the destination computer has received, and how much data it can transmit before overloading the network itself. This amount of data is determined by the window size, and it is defined at the soure computer. If the window size is too large, then the link is overloaded, and if it is too small, then the data transmission takes a very long time. For deciding the window size, the computer first waits for the confirmation for the initial packet sent, and based on the time, it gradually increases the widow size. 
+
+4) The application layer: The first three layers work it to transmit the packets as fast and completely as possible to the final link. The application layer is split into two parts: server and client. Whenever we make a request from our web browser, we are the clint and the url we try to connect to is the server. 
+
+When we develop the server and the client applications, we need an application protocol that decides how these two halves will exchange messages. 
+
+
+At the core of every communication that we make via the internet today are these 4 layers that govern how the data will be exchanged via the internet. We now take a look at each of the individual layers from the above 4 layered stack of transferring data.
+
