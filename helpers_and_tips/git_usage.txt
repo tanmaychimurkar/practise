@@ -84,6 +84,15 @@ branch, but forgot to stage some files (staging is adding files via `git add`). 
 the current commit, we can use `git commit --amend` and then it will let us rewrite the history of the commit. However,
 this creates a new commit altogether.
 
+We can also update what files are added in the current commit before we have pushed it. To update the files that are
+added in the current commit, we can first check what files are added in the current commit by using:
+
+    git diff --cached
+
+Once we see what files are added in the current commit, and if we have to either add or remove files from the git scm,
+we can stage the changes and then run `git commit --amend`. This will again give the same message box that we get when
+doing git commit --amend, and we can update the commit message.
+
 However, amended commits are new commits altogether and they replace the old commit, i.e., the old commit will not be
 on our branch at all.
 
