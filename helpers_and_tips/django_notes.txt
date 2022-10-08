@@ -50,7 +50,34 @@ In Django, we can pass a url as '/something-blah-blah' after the main url that r
 done by creating the url in urls.py such that has a <int:my_number> or <slug:my_string> attached to it after the
 normal Django url.
 
+We use template engine to get the parameters from a user request instead of doing a string concatenation, as concat
+always has a lot of overhead on the syntax and other stuff. In our views, we pass a dictionary to the response function,
+which in turn calls the view that is to be returned. Inside this view is where we set the Jinja2 syntax for the key of
+the dictionary that we passed in. This makes it easier to return the responses to the user, as they responses can now
+be returned dynamically via the template engine that is being used in the actual html file in the views folder of the
+application. Templates in Django can be inherited, and they can be thought of as containers, wherein for example, we
+could have a template with one styling and the other templates introduce new variables by extending that template, but
+retain the same style.
 
+
+#### URLs
+
+In Django, most of the times developers choose to keep a hardcoded name for each url path in the urls list. This can
+get very messy if we later want that particular url to be called something else, as we will have to change that url in
+the urls list, and then later we will also have to find and replace the new url path name in all the places where that
+url path was being used. Instead of this, in the path function for each element in the urls list, we can create a
+parameter called name, that would take the namespace that url is referring to. The next step is to then replace all the
+places wherein the hardcoded name of the url is used in the code and replace that with the Jinja2 syntax for referring
+to the path of the url by the name declared in the path function for that particular url. The syntax for this looks as
+follows:
+
+    {% url 'route:my_url_name_variable' %}
+
+The above can be used as a href in a different views file where the url acts as a reference.
+
+We can combine views and urls to create generic views, which are largely inheriting from a ListView object in Django.
+Using generic views makes the job of creating a same view for a different model, and eventually different url patterns
+that follow that model very easy. More about
 
 
 
