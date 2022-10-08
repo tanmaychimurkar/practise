@@ -1,0 +1,5 @@
+Django follows the common MVC flow, where the model is the database ORMs, the views are the html files that we want the
+user to see on the webpage, and the controller are the files that route the user from one place to another.
+
+In Django, we can always create ORMs that are agnostic to the type of database that they connect to, and this is
+handeled internally by django.
