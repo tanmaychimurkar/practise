@@ -7,3 +7,9 @@ handled internally by django.
 The implementation of the ORMs is straightforward, as in most of the table creation definition has to be transferred to
 the ORM and it will take care of creating such a table. The column types of the table can be looked at from the
 documentation from the Django docs and it can thus be implemented to be the same as the table creation structure.
+
+For creating views, we need a request and a response cycle. For this, we can use HttpRequest and HttpResponse from
+Django in the views file to either take a user request or to show to the user a response on their web browser. Much of
+this should be made safer when taking requests from the user, and to stop the user from passing any type of HTML in the
+url itself, we can use the Django escape character. Thus even if the user passes some from of structured input that
+parses into HTML code, the escape function from django.utils.html would not let it inject into our code.
