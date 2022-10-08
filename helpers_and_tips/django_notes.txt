@@ -1,5 +1,6 @@
 Django follows the common MVC flow, where the model is the database ORMs, the views are the html files that we want the
-user to see on the webpage, and the controller are the files that route the user from one place to another.
+user to see on the webpage, and the controller are the files that route the user from one place to another. Controller
+contains the main logic about what should be the decision and where should it lead to once a decision has been made.
 
 In Django, we can always create ORMs that are agnostic to the type of database that they connect to, and this is
 handled internally by django.
@@ -13,3 +14,16 @@ Django in the views file to either take a user request or to show to the user a 
 this should be made safer when taking requests from the user, and to stop the user from passing any type of HTML in the
 url itself, we can use the Django escape character. Thus even if the user passes some from of structured input that
 parses into HTML code, the escape function from django.utils.html would not let it inject into our code.
+
+Using plain html in the response function needs a lot of string concatenation and syntax management. Instead of using
+plain html, we can use a template that will allow us to bypass all the plain string html that we pass. For this reason,
+Django uses the so-called Jinja syntax, which is a means to pass user variables into the HTML directly. The main logic
+still remains the same, it's just that all the parameters that are to be fetched via the get cycle are now wrapped into
+double curly braces (jinja syntax) and are referred to from the view function that is defined in views.
+
+We can also put logic to the parameters that we fetch from the get cycle by using {% %} and write if-else conditions
+referring to the name of the parameter that we are fetching from the get cycle.
+
+For views that we create, we can also use inheritance for templates, wherein we can have one base template from which
+the other templates can extend and pass extra information between the block of the content. This is a common practise
+for inheriting templates in Django.
