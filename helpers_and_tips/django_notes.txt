@@ -2,4 +2,8 @@ Django follows the common MVC flow, where the model is the database ORMs, the vi
 user to see on the webpage, and the controller are the files that route the user from one place to another.
 
 In Django, we can always create ORMs that are agnostic to the type of database that they connect to, and this is
-handeled internally by django.
+handled internally by django.
+
+The implementation of the ORMs is straightforward, as in most of the table creation definition has to be transferred to
+the ORM and it will take care of creating such a table. The column types of the table can be looked at from the
+documentation from the Django docs and it can thus be implemented to be the same as the table creation structure.
