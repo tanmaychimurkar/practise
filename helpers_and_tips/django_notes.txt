@@ -27,3 +27,58 @@ referring to the name of the parameter that we are fetching from the get cycle.
 For views that we create, we can also use inheritance for templates, wherein we can have one base template from which
 the other templates can extend and pass extra information between the block of the content. This is a common practise
 for inheriting templates in Django.
+
+#### Views
+
+Views are important in Django and are at the core of every application. The urls are responsible for getting a user to
+a view, wherein the user does his activity and through that activity, there is exchange of information via the database.
+
+In Django world, to parse a url, there is a terminology that is followed. Usually after the main domain, the first
+thing that follows is the application name, and is also the folder name, as the terminology dictates that both of them
+be the same.
+
+It is possible to route a request to a pre-defined class from Django itself, to a function in views.py file of the
+application, or routed to a class in views.py
+
+We can process the request that a user has made either via a view function or a view class. In view class, the main
+class from which we inherit is the View class, and the functions that we have to write for this class is the get and
+the post function, which are related to the GET and the POST method respectively. In the url list, if we are using a
+class based view, then we need to add the ClassName.as_view() after the path of the url to be able to display the
+HttpResponse as a view.
+
+In Django, we can pass a url as '/something-blah-blah' after the main url that routes to the view, and this can be
+done by creating the url in urls.py such that has a <int:my_number> or <slug:my_string> attached to it after the
+normal Django url.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
