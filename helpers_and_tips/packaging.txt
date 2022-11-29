@@ -54,9 +54,21 @@ The configuration in the toml file is as follows:
 
 Packages should always be tested locally first, and for this, we have editable installs. 
 
-Editable installs are good in the sense that they do not install the package into the `site-packages` directory, but instead install them locally. 
+Editable installs are good in the sense that they do not install the package into the `site-packges` directory, but instead install them locally. 
 
-To install a local package across `site-packages`, we can run `python -m pip install -e .` from the directory where the `pyproject.toml` file exists
+----------------------------------------------------------
+
+VVVVVVV IMP
+
+for installing local packages without setup.py and by only using the toml file, we have to run the following command:
+
+
+	python -m pip install -e .
+
+
+where the toml file is present in the current directory from where the function is invoked. Look at the toml file present here: https://github.com/tanmaychimurkar/ca-asthma
+
+We need to mention the `tools.packages` list explicitly so that the installation is mostly always successful
 
 
 
